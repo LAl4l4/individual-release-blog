@@ -1,5 +1,12 @@
 .App {
-  text-align: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;           /* 控制显示高度 */
+    overflow: hidden;         /* 裁掉超出的部分 */
+    background-color: white;  /* 白色背景 */
+    top: 0px;
+    margin-top: 0%;
+    position: absolute;
 }
 
 .App-logo {
