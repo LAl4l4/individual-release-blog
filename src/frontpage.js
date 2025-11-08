@@ -4,10 +4,10 @@ import { useState } from "react";
 
 export default function Frontpage() {
     return (
-        <div className="frontpage-background">
+        
             
-            <FrontImg />
-        </div>
+        <FrontImg />
+        
     );
 }
 
@@ -16,13 +16,12 @@ function FrontImg() {
 
     return (
         <div 
-            className="frontpage-container"
+            className={"frontpage-container" + (open ? "slide" : "")}
             onClick = {()=>setOpen(!open)}
         >
-            
             <img
             src="/image/backgroundtwo.png"
-            className={"frontpage-img" + (open ? "slide" : "")}
+            className="frontpage-img" 
             alt="front"
 
             />
