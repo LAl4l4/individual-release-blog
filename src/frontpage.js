@@ -1,11 +1,11 @@
 import './Frontpage.css';
 import { useState } from "react";
+import PageCtrl from './PageController';
 
 
 export default function Frontpage() {
     return (
         
-            
         <FrontImg />
         
     );
@@ -26,6 +26,8 @@ function FrontImg() {
 
             />
             <FrontArrow />
+            <PageCtrl isup={open}
+            />
         </div>
     )
 }
