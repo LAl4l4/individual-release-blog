@@ -20,7 +20,7 @@ function FrontImg() {
             onClick = {()=>setOpen(!open)}
         >
             <img
-            src="/image/backgroundtwo.png"
+            src="./image/backgroundtwo.png"
             className="frontpage-img" 
             alt="front"
 
@@ -35,7 +35,7 @@ function FrontImg() {
 function FrontArrow() {
     return (
         <img    
-            src="/image/Arrow.png"
+            src="./image/Arrow.png"
             id="arrow"
             alt="front"
         />

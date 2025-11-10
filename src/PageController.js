@@ -7,7 +7,9 @@ export default function PageCtrl({isup}) {
     const [pagenum, setnum] = useState(0);
 
     return (
-        <div id={"background" + (isup? "up" : "")}>
+        <div id={"background" + (isup? "up" : "")}
+            onClick={()=>setnum(pagenum+1)}
+        >
 
         </div>
     );

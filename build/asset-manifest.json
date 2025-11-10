@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/individual-release-blog/static/css/main.522c85aa.css",
+    "main.js": "/individual-release-blog/static/js/main.c44858c6.js",
+    "static/js/453.20488a1d.chunk.js": "/individual-release-blog/static/js/453.20488a1d.chunk.js",
+    "index.html": "/individual-release-blog/index.html",
+    "main.522c85aa.css.map": "/individual-release-blog/static/css/main.522c85aa.css.map",
+    "main.c44858c6.js.map": "/individual-release-blog/static/js/main.c44858c6.js.map",
+    "453.20488a1d.chunk.js.map": "/individual-release-blog/static/js/453.20488a1d.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.522c85aa.css",
+    "static/js/main.c44858c6.js"
+  ]
+}

@@ -1,7 +1,7 @@
 
 
 
-export default function Intro({ open }) {
+export default function Intro({pagenum}) {
 
     return (
         <div id={"Intromain" + (open ? "up" : "")}
