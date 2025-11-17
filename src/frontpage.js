@@ -4,30 +4,35 @@ import PageCtrl from './PageController';
 
 
 export default function Frontpage() {
+    const [open, setOpen] = useState(false);
+
     return (
-        
-        <FrontImg />
-        
+        <div className='frontpage-background'>
+            <FrontImg 
+                open={open}
+                setopen={()=>setOpen(!open)}
+            />
+            <PageCtrl 
+                isup={open}
+            />
+        </div>
     );
 }
 
-function FrontImg() {
-    const [open, setOpen] = useState(false);
+function FrontImg({open, setopen}) {
 
     return (
         <div 
             className={"frontpage-container" + (open ? "slide" : "")}
-            onClick = {()=>setOpen(!open)}
+            onClick = {()=>setopen()}
         >
             <img
-            src="./image/backgroundtwo.png"
+            src="/image/backgroundtwo.png"
             className="frontpage-img" 
             alt="front"
 
             />
             <FrontArrow />
-            <PageCtrl isup={open}
-            />
         </div>
     )
 }
@@ -35,7 +40,7 @@ function FrontImg() {
 function FrontArrow() {
     return (
         <img    
-            src="./image/Arrow.png"
+            src="/image/whArrowup.png"
             id="arrow"
             alt="front"
         />

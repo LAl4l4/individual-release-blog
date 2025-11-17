@@ -1,6 +1,48 @@
 #background{
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    padding: 0%;
+    margin: 0%;
     background-color: white;
     position: absolute;
+    transform: scale(0);
+    transform-origin: center center; /* 从中心缩放 */
+    transition: transform 0.6s ease;
+}
+
+#backgroundup{
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0%;
+    margin: 0%;
+    background-color: white;
+    position: absolute;
+    transform: scale(1);
+    transform-origin: center center;
+    transition: transform 0.6s ease;
+    transition-delay: 0.3s; 
+}
+
+#uparrow{
+    position:absolute;
+    top:-10%;
+    left:50%;
+    padding: 0%;
+    margin: 0%;
+    transform: translateX(-50%) scale(0.5);
+    z-index: 10;
+}
+
+#downarrow{
+    position:absolute;
+    bottom: -10%;
+    left:50%;
+    padding: 0%;
+    margin: 0%;
+    transform: translateX(-50%) scale(0.5);
+    z-index: 10;
 }
