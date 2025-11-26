@@ -1,6 +1,8 @@
 import './Frontpage.css';
 import { useState } from "react";
-import PageCtrl from './PageController';
+import PageCtrl from '../Contents/PageController';
+import LoginIcon from '../Account/LoginIcon';
+
 
 
 export default function Frontpage() {
@@ -8,14 +10,19 @@ export default function Frontpage() {
 
     return (
         <div className='frontpage-background'>
+            
             <FrontImg 
                 open={open}
                 setopen={()=>setOpen(!open)}
             />
-            
+            <LoginIcon
+                open={open}
+            />
             <PageCtrl 
                 isup={open}
             />
+
+            
         </div>
     );
 }

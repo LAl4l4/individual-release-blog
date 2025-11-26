@@ -1,6 +1,7 @@
 
 import './App.css';
-import Frontpage from './frontpage';
+import Frontpage from './Frontpage/frontpage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
@@ -9,6 +10,13 @@ function App() {
 
         <Frontpage />
       </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Frontpage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/content" element={<ContentPage />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
