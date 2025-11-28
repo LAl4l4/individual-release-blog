@@ -1,5 +1,6 @@
 import './LoginIcon.css';
 import {useState, useRef} from 'react';
+import { useNavigate } from "react-router-dom";
 
 export default function Icon({open}) {
     const [hover, setHover] = useState(false);
@@ -19,6 +20,8 @@ export default function Icon({open}) {
         }, 200); // 👈调这个时间
     }
 
+    const navigate = useNavigate();
+
     return (
         <div
             className={"login-icon-container" + (open ? "" : " center")}
@@ -35,7 +38,10 @@ export default function Icon({open}) {
             </div>
 
             <div className={"icon-dropdown" + (hover ? " visible" : "")} role="menu">
-                <button className="dropdown-item">Login</button>
+                <button 
+                    className="dropdown-item"
+                    onClick={()=>navigate("/login")}
+                >Login</button>
                 <button className="dropdown-item">Profile</button>
                 <button className="dropdown-item">Settings</button>
             </div>

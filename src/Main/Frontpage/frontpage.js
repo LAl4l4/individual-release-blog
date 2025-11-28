@@ -1,7 +1,7 @@
 import './Frontpage.css';
 import { useState } from "react";
 import PageCtrl from '../Contents/PageController';
-import LoginIcon from '../Account/LoginIcon';
+import LoginIcon from '../LoginIcon/LoginIcon';
 
 
 
