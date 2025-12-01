@@ -1,18 +1,21 @@
 import {useState} from 'react';
 import './Login.css';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { logIn } from '../Variable/login';
 
 // Front-end only shell. The app's backend integration should pass an `onSubmit` prop.
 // Example usage:
 // <Login onSubmit={(creds)=> api.login(creds).then(...)} />
 async function CheckLogin(email, password) {
     try {
-    // axios 默认发送 JSON 或 form-data，需要匹配后端
+    // axios 默认发送 JSON 或 form-data,需要匹配后端
     const res = await axios.post(
       'http://localhost:8080/auth/login',
-      null, // POST body 空，因为我们用 params
+      null, // POST body 空,因为我们用 params
       {
-        params: { user: email, pass: password } // 对应 Spring Boot @RequestParam
+        params: { username: email, pass: password } // 对应 Spring Boot @RequestParam
       }
     );
 
@@ -27,28 +30,33 @@ async function CheckLogin(email, password) {
   }
 }
 
-export default function Login({onSubmit}) {
+export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [localError, setLocalError] = useState('');
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	async function handleSubmit(e){
 		e.preventDefault();
 		setLocalError('');
 		// Basic front-end validation only (optional)
 		if (!email || !password) {
-			setLocalError('请填写邮箱和密码');
+			setLocalError('请填写邮箱/用户名和密码');
 			return;
 		}
 		
         const result = await CheckLogin(email, password);
         if (result.success) {
+            dispatch(logIn(email));
             alert('登录成功');
-            // 可以跳转页面或者更新状态
+            navigate('/');
         } else {
             setLocalError(result.message);
         }
 	}
+
+
 
 	return (
 		<div className="login-page">
@@ -67,12 +75,12 @@ export default function Login({onSubmit}) {
 					</div>
 
 					<label className="field">
-						<span className="label">邮箱</span>
+						<span className="label">邮箱/用户名</span>
 						<input
-							type="email"
+							type="text"
 							value={email}
 							onChange={e=>setEmail(e.target.value)}
-							placeholder="yours@example.com"
+							placeholder="yours@example.com/username"
 							className="input"
 							required
 						/>
@@ -97,7 +105,9 @@ export default function Login({onSubmit}) {
 					</button>
 
 					<div className="row">
-						<button type="button" className="btn ghost">使用其他方式登录</button>
+						<button type="button" className="btn ghost"
+						onClick={() => navigate('/register')}
+						>账号注册</button>
 						<a className="link" href="#forgot">忘记密码?</a>
 					</div>
 				</form>

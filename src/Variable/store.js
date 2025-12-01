@@ -1,11 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import pageSlice from "/pagenum.js";
-import uiSlice from "/windowsStatus.js";
+
+import { loginSlice } from "./login.js";
 
 
 const rootReducer = combineReducers({
-  page: pageSlice.reducer,
-  ui: uiSlice.reducer
+  login: loginSlice.reducer
 });
 
 const store = configureStore({ reducer: rootReducer });

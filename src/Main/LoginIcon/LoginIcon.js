@@ -1,10 +1,15 @@
 import './LoginIcon.css';
 import {useState, useRef} from 'react';
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsLoggedIn, logOut } from '../../Variable/login';
 
 export default function Icon({open}) {
     const [hover, setHover] = useState(false);
     const hideTimer = useRef(null);
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     
     function handleEnter() {
@@ -20,7 +25,10 @@ export default function Icon({open}) {
         }, 200); // 👈调这个时间
     }
 
-    const navigate = useNavigate();
+    function handleLogout() {
+        dispatch(logOut());
+        navigate('/');
+    }
 
     return (
         <div
@@ -38,12 +46,33 @@ export default function Icon({open}) {
             </div>
 
             <div className={"icon-dropdown" + (hover ? " visible" : "")} role="menu">
-                <button 
-                    className="dropdown-item"
-                    onClick={()=>navigate("/login")}
-                >Login</button>
-                <button className="dropdown-item">Profile</button>
-                <button className="dropdown-item">Settings</button>
+                {!isLoggedIn ? (
+                    <>
+                        <button 
+                            className="dropdown-item"
+                            onClick={()=>navigate("/login")}
+                        >Login</button>
+                        <button 
+                            className="dropdown-item"
+                            onClick={()=>navigate("/register")}
+                        >Register</button>
+                    </>
+                ) : (
+                    <>
+                        <button 
+                            className="dropdown-item"
+                            onClick={()=>navigate("/profile")}
+                        >Profile</button>
+                        <button 
+                            className="dropdown-item"
+                            onClick={()=>navigate("/settings")}
+                        >Settings</button>
+                        <button 
+                            className="dropdown-item"
+                            onClick={handleLogout}
+                        >Logout</button>
+                    </>
+                )}
             </div>
         </div>
     );

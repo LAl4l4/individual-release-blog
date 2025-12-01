@@ -4,6 +4,7 @@ import Intro from './IntroPage';
 
 export default function PageCtrl({isup}) {
     const [pagenum, setnum] = useState(0);
+    const [loadarrow, setLoadarrow] = useState(false);
 
     if (pagenum < 0) {
         setnum(0);
@@ -11,15 +12,30 @@ export default function PageCtrl({isup}) {
         setnum(3);
     }
 
+    useEffect(() => {
+        let timer;
+
+        if (isup) {
+        // 背景上升动画时长假设是 0.6s + 0.3s delay
+        timer = setTimeout(() => setLoadarrow(true), 600); // 0.9s 后显示箭头
+        } else {
+        // 收回背景时隐藏箭头
+        setLoadarrow(false);
+        }
+
+        return () => clearTimeout(timer);
+    }, [isup]);
 
     return (
         <div id={"background" + (isup? "up" : "")}
         >
             <Orbs visible={isup} pagenum={pagenum} />
-            <PageArrow
-                onNext={()=>setnum(pagenum-1)}
-                onPrev={()=>setnum(pagenum+1)}
-            />
+            {loadarrow && (
+                <PageArrow
+                    onNext={() => setnum(pagenum - 1)}
+                    onPrev={() => setnum(pagenum + 1)}
+                />
+            )}
             <Intro pagenum={pagenum}/>
             
         </div>
@@ -58,7 +74,7 @@ function Orbs({visible, pagenum}){
 
 function PageArrow({onNext, onPrev}) {
     return (
-        <div>
+        <div className="page-arrows">
             <img
                 id="uparrow"
                 src="image/whArrowup.png"
