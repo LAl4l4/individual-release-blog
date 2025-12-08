@@ -1,16 +1,22 @@
 import {useState, useEffect} from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectPageNum, setPageNum } from '../../Variable/pagenum';
 import './PgCtrl.css';
 import Intro from './IntroPage';
 
 export default function PageCtrl({isup}) {
-    const [pagenum, setnum] = useState(0);
+    const pagenum = useSelector(selectPageNum);
+    const dispatch = useDispatch();
     const [loadarrow, setLoadarrow] = useState(false);
 
-    if (pagenum < 0) {
-        setnum(0);
-    } else if (pagenum > 3) {
-        setnum(3);
-    }
+    // Clamp pagenum within bounds when it changes
+    useEffect(() => {
+        if (pagenum < 0) {
+            dispatch(setPageNum(0));
+        } else if (pagenum > 3) {
+            dispatch(setPageNum(3));
+        }
+    }, [pagenum, dispatch]);
 
     useEffect(() => {
         let timer;
@@ -32,8 +38,8 @@ export default function PageCtrl({isup}) {
             <Orbs visible={isup} pagenum={pagenum} />
             {loadarrow && (
                 <PageArrow
-                    onNext={() => setnum(pagenum - 1)}
-                    onPrev={() => setnum(pagenum + 1)}
+                    onNext={() => dispatch(setPageNum(pagenum - 1))}
+                    onPrev={() => dispatch(setPageNum(pagenum + 1))}
                 />
             )}
             <Intro pagenum={pagenum}/>

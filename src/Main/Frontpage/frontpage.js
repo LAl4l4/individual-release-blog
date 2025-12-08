@@ -1,25 +1,27 @@
 import './Frontpage.css';
-import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsOpen, toggleIsOpen } from '../../Variable/isopen';
 import PageCtrl from '../Contents/PageController';
 import LoginIcon from '../LoginIcon/LoginIcon';
 
 
 
 export default function Frontpage() {
-    const [open, setOpen] = useState(false);
+    const isOpen = useSelector(selectIsOpen);
+    const dispatch = useDispatch();
 
     return (
         <div className='frontpage-background'>
             
             <FrontImg 
-                open={open}
-                setopen={()=>setOpen(!open)}
+                open={isOpen}
+                setopen={()=>dispatch(toggleIsOpen())}
             />
             <LoginIcon
-                open={open}
+                open={isOpen}
             />
             <PageCtrl 
-                isup={open}
+                isup={isOpen}
             />
 
             

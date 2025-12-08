@@ -37,7 +37,7 @@
     position:fixed;
     width : 200px;
     height: 200px;
-    top:-8%;
+    top:-9%;
     left:50%;
     padding: 0%;
     margin: 0%;
@@ -47,14 +47,14 @@
 }
 
 #uparrow:hover{
-    transform: translateX(-50%) scale(0.8);
+    transform: translateX(-50%) scale(0.6);
 }
 
 #downarrow{
     position:fixed;
     width : 200px;
     height: 200px;
-    bottom: -8%;
+    bottom: -9%;
     left:50%;
     padding: 0%;
     margin: 0%;
@@ -64,7 +64,7 @@
 }
 
 #downarrow:hover{
-    transform: translateX(-50%) scale(0.8);
+    transform: translateX(-50%) scale(0.6);
 }
 
 /* Orbital background (colorful balls orbiting page center) */
