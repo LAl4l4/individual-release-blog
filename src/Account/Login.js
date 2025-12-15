@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { logIn } from '../Variable/login';
+import { getUserProfile } from '../Variable/profile';
 import { setPageNum } from '../Variable/pagenum';
 
 // Front-end only shell. The app's backend integration should pass an `onSubmit` prop.
@@ -49,7 +50,8 @@ export default function Login() {
 		
         const result = await CheckLogin(email, password);
         if (result.success) {
-            dispatch(logIn(email));
+            dispatch(logIn());
+            dispatch(getUserProfile());
 			dispatch(setPageNum(0));
             alert('登录成功');
             navigate('/');
