@@ -10,10 +10,15 @@ export const loginSlice = createSlice({
         },
         logOut(state) {
             state.isLoggedIn = false;
+        },
+        //这里存储id
+        storeUserId(state, action) {
+            state.userId = action.payload;
         }
     }
 });
 
-export const { logIn, logOut } = loginSlice.actions;
+export const { logIn, logOut, storeUserId } = loginSlice.actions;
 
 export const selectIsLoggedIn = (state) => state.login.isLoggedIn;
+export const selectUserId = (state) => state.login.userId;

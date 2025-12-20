@@ -20,13 +20,69 @@
     transition: transform 0.6s ease;
 }
 
-#introarticle{
-    white-space: pre-wrap; /* 保留换行符和空格 */
-    font-size: 18px;
-    line-height: 1.6;
+/* Cards container: horizontal layout with spacing */
+.intro-grid {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px; /* 内边距形成左右与外框的间距 */
+    gap: 24px; /* 左右区域间距 */
+    align-items: stretch; /* 顶部、底部严格对齐并拉伸 */
+    background: transparent;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+}
 
-    color: #333;
-    position: absolute;
-    top: 20%;
-    left: 20%;
+.intro-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    background: transparent;
+}
+
+.intro-right {
+    height: 100%;
+    display: flex;
+    background: transparent;
+}
+
+/* Base card style */
+.card {
+    background: #fff;
+    border-radius: 12px; /* 圆角 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* 阴影 */
+    padding: 16px;
+    color: #222;
+}
+
+.card-title {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.card-text {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Specific sizing */
+.card-top {
+    min-height: 140px;
+}
+
+.card-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px; /* 小卡片之间空隙 */
+    flex: 1 1 auto; /* 占据剩余空间 */
+    background: transparent;
+}
+
+.card-small {
+    min-height: 120px;
+}
+
+.card-large {
+    flex: 1; /* 右侧主卡片占满右侧列 */
 }

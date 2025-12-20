@@ -104,6 +104,8 @@
   width:100%;
   transition: all .22s ease;
   font-family: inherit;
+  min-width: 0;
+  box-sizing: border-box; 
 }
 
 .profile-screen .field-input:focus{
@@ -240,12 +242,102 @@
 }
 
 .rightsection{
-    width: 80%;
     flex: 0 0 80%;
     display: flex;
-    flex-direction: column;
+  flex-direction: column;
     min-height: 0;
     overflow-y: auto;
-    padding: 32px 40px;
+  padding: 32px 40px;
     background: white;
+}
+
+/* 右侧内容居中，限制宽度，保持层次 */
+.right-inner{
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-block{
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  padding: 20px 24px;
+}
+
+.section-title{
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.field-stack{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.textarea{
+  min-height: 96px;
+  resize: vertical;
+}
+
+.action-row{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.primary-btn{
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(102,126,234,0.35);
+  transition: all .2s ease;
+  width: 100%;
+}
+
+.primary-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(102,126,234,0.45);
+}
+
+.ghost-btn{
+  background: white;
+  color: #555;
+  border: 2px solid #e1e4e8;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .2s ease;
+  width: 100%;
+}
+
+.ghost-btn:hover{
+  border-color: #667eea;
+  color: #333;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.decor-text{
+  font-family: 'Pacifico', 'Comic Sans MS', cursive;
+  font-size: 28px;
+  background: linear-gradient(120deg, #ff7eb3, #ff758c, #ffa65c, #6dd5ed, #b28cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 8px 0 0 0;
 }

@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import './Login.css';
-import axios from 'axios';
+import { register } from '../API/auth';
 import { useNavigate } from "react-router-dom";
 
 // Front-end only shell. Replace the endpoint/params to match your backend contract.
@@ -12,11 +12,7 @@ async function createAccount({email, password, username}) {
         email: email 
     };
 
-    const res = await axios.post(
-      'http://localhost:8080/auth/register',
-      null,
-      { params }
-    );
+    const res = await register(params.email, params.pass, params.username);
 
     if (res.data === '用户名已存在') {
       return { success: false, message: res.data };

@@ -1,20 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { pullProfiles } from '../API/pullprof';
+import { logOut } from './login';
 
 // 异步action：从数据库获取用户数据
 export const getUserProfile = createAsyncThunk(
     'profile/getUserProfile',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get(
-                'http://localhost:8080/api/user/profile',
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    withCredentials: true // 发送cookies
-                }
-            );
+            const response = await pullProfiles();//通过id拉取
+
+            //这里做错误handle
 
             return response.data;
         } catch (error) {
@@ -28,11 +23,10 @@ export const profileSlice = createSlice({
     initialState: {
         userData: {
             id: null,
-            username: '',
-            email: '',
-            nickname: '',
+            bio: '',
             avatar: '',
-            bio: ''
+            birthday: '',
+            gender: ''
         },
         loading: false,
         error: null
@@ -41,11 +35,10 @@ export const profileSlice = createSlice({
         clearProfile(state) {
             state.userData = {
                 id: null,
-                username: '',
-                email: '',
-                nickname: '',
+                bio: '',
                 avatar: '',
-                bio: ''
+                birthday: '',
+                gender: ''
             };
             state.error = null;
         },
@@ -61,11 +54,29 @@ export const profileSlice = createSlice({
             })
             .addCase(getUserProfile.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userData = action.payload;
+                const { id, bio, avatarUrl, birthday, gender } = action.payload;
+                state.userData = {
+                    id,
+                    bio,
+                    avatar: avatarUrl,
+                    birthday,
+                    gender
+                };
             })
             .addCase(getUserProfile.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            //监听logout action，清空profile
+            .addCase(logOut, (state) => {
+                state.userData = {
+                    id: null,
+                    bio: '',
+                    avatar: '',
+                    birthday: '',
+                    gender: ''
+                };
+                state.error = null;
             });
     }
 });

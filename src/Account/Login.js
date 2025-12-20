@@ -1,30 +1,26 @@
 import {useState} from 'react';
 import './Login.css';
-import axios from 'axios';
+import {checkLogin} from '../API/auth';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { logIn } from '../Variable/login';
-import { getUserProfile } from '../Variable/profile';
+import { logIn, storeUserId } from '../Variable/login';
 import { setPageNum } from '../Variable/pagenum';
 
 // Front-end only shell. The app's backend integration should pass an `onSubmit` prop.
 // Example usage:
 // <Login onSubmit={(creds)=> api.login(creds).then(...)} />
 async function CheckLogin(email, password) {
+	const dispatch = useDispatch();
+
     try {
     // axios 默认发送 JSON 或 form-data,需要匹配后端
-    const res = await axios.post(
-      'http://localhost:8080/auth/login',
-      null, // POST body 空,因为我们用 params
-      {
-        params: { username: email, pass: password } // 对应 Spring Boot @RequestParam
-      }
-    );
+    const res = await checkLogin(email, password);
 
-    if (res.data === '登录成功') {
-      return { success: true, message: '登录成功' };
+    if (res.data.result === '登录成功') {
+	  dispatch(storeUserId(res.data.userid)); // 后端返回userid字段
+      return { success: true, message: '登录成功' };	
     } else {
-      return { success: false, message: res.data };
+      return { success: false, message: res.data.result };
     }
   } catch (err) {
     console.error('请求失败', err);
@@ -51,7 +47,8 @@ export default function Login() {
         const result = await CheckLogin(email, password);
         if (result.success) {
             dispatch(logIn());
-            dispatch(getUserProfile());
+			
+			
 			dispatch(setPageNum(0));
             alert('登录成功');
             navigate('/');

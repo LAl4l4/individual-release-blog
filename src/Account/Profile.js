@@ -1,17 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Profile.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUserEmail, logOut } from '../Variable/login';
+import { logOut } from '../Variable/login';
 import { useNavigate } from 'react-router-dom';
+import { getUserProfile } from '../Variable/profile';
+
 
 export default function Profile(){
-  const email = useSelector(selectUserEmail);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
-  const [pwd, setPwd] = useState('');
-  const [newPwd, setNewPwd] = useState('');
+  const [avatarLink] = useState('https://example.com/avatar.png');
+  const [birthday, setBirthday] = useState('');
+  const [username] = useState('your-username');
+
+  const profile = useSelector(state => state.profile.userData);
+
+  useEffect(() => {
+    dispatch(getUserProfile());
+    setBio(profile.bio);
+    setBirthday(profile.birthday); 
+  }, [dispatch, profile.bio, profile.birthday]);
 
   const [tab, setTab] = useState('info');
 
@@ -27,7 +37,9 @@ export default function Profile(){
         <Profiles 
           bio={bio} setBio={setBio} 
           displayName={displayName} setDisplayName={setDisplayName}
-          email={email} pwd={pwd} setPwd={setPwd} newPwd={newPwd} setNewPwd={setNewPwd}
+          avatarLink={avatarLink}
+          birthday={birthday} setBirthday={setBirthday}
+          username={username}
           handleLogout={handleLogout} tab={tab} setTab={setTab}
         />
     </div>
@@ -49,32 +61,31 @@ function NavigateBar({ navigate }){
 }
 
 function Profiles(
-    { bio, setBio, displayName, 
-        setDisplayName, email, pwd, 
-        setPwd, newPwd, setNewPwd, 
-        handleLogout, tab, setTab }
+  { bio, setBio, displayName, 
+    setDisplayName, avatarLink,
+    birthday, setBirthday, username,
+    handleLogout, tab, setTab }
 ){
     return (
         <div className='infopart'>
             <LeftSection tab={tab} setTab={setTab} />
 
-            <div className="rightsection">
+      <div className="rightsection">
                 {tab === 'info' && (
                     <ProfileInfo
                         bio={bio}
                         setBio={setBio}
                         displayName={displayName}
                         setDisplayName={setDisplayName}
+            avatarLink={avatarLink}
+            birthday={birthday}
+            setBirthday={setBirthday}
+            username={username}
                     />
                 )}
 
                 {tab === "email" && (
                     <EmailPassword
-                        email={email}
-                        pwd={pwd}
-                        setPwd={setPwd}
-                        newPwd={newPwd}
-                        setNewPwd={setNewPwd}
                         handleLogout={handleLogout}
                     />
                 )}
@@ -106,77 +117,72 @@ function LeftSection({ tab, setTab }){
   );
 }
 
-function ProfileInfo({ bio, setBio, displayName, setDisplayName }){
+function ProfileInfo({ bio, setBio, username , avatarLink, birthday, setBirthday }){
   return (
-    <div className='contentsection'>
-        <div className="field-group">
-            <label className="field-label">显示名称</label>
-            <input 
-              type="text" 
-              value={displayName} 
-              onChange={e=>setDisplayName(e.target.value)} 
-              placeholder="输入昵称" 
-              className="field-input"
-            />
-            <span className="field-hint">将在博客中对其他人显示</span>
-        </div>
+    <div className='contentsection right-inner'>
+        <div className="card-block">
+            <h3 className="section-title">基本信息</h3>
+            <div className="field-stack">
+                <div className="field-group">
+                    <label className="field-label">用户名</label>
+                    <input 
+                      type="text" 
+                      value={username}
+                      readOnly
+                      className="field-input"
+                    />
+                </div>
 
-        <div className="field-group">
-            <label className="field-label">个人简介</label>
-            <input 
-              type="text" 
-              value={bio} 
-              onChange={e=>setBio(e.target.value)} 
-              placeholder="一句话介绍你自己" 
-              className="field-input"
-            />
+                <div className="field-group">
+                    <label className="field-label">Bio</label>
+                    <textarea
+                      value={bio}
+                      onChange={e=>setBio(e.target.value)}
+                      placeholder="一句话介绍你自己"
+                      className="field-input textarea"
+                      rows={3}
+                    />
+                </div>
+
+                <div className="field-group">
+                    <label className="field-label">头像链接</label>
+                    <input 
+                      type="text" 
+                      value={avatarLink}
+                      readOnly
+                      className="field-input"
+                    />
+                </div>
+
+                <div className="field-group">
+                    <label className="field-label">生日</label>
+                    <input 
+                      type="date" 
+                      value={birthday}
+                      onChange={e=>setBirthday(e.target.value)}
+                      className="field-input"
+                    />
+                </div>
+            </div>
         </div>
     </div>
   );
 }
 
-function EmailPassword({ email, pwd, setPwd, newPwd, setNewPwd, handleLogout }){
+function EmailPassword({ handleLogout }){
   return (
-    <div>
-        
-          <div className="field-group">
-            <label className="field-label">邮箱</label>
-            <input type="email" value={email} readOnly className="field-input" />
-            <span className="field-hint">登录使用的邮箱地址</span>
-          </div>
-        
-
-         
-          <h2 className="card-title">修改密码</h2>
-          <div className="field-group">
-            <label className="field-label">当前密码</label>
-            <input 
-              type="password" 
-              value={pwd} 
-              onChange={e=>setPwd(e.target.value)} 
-              placeholder="当前密码" 
-              className="field-input"
-            />
-        
-
-        <div className="field-group">
-            <label className="field-label">新密码</label>
-            <input 
-              type="password" 
-              value={newPwd} 
-              onChange={e=>setNewPwd(e.target.value)} 
-              placeholder="至少 6 位字符" 
-              className="field-input"
-            />
+    <div className="contentsection right-inner">
+        <div className="card-block">
+            <h3 className="section-title">密码 / 邮箱</h3>
+      <div className="action-row">
+        <button className="primary-btn">修改密码</button>
+        <button className="ghost-btn">修改邮箱</button>
             </div>
-
-            <button className="save-btn">保存修改</button>
         </div>
 
-        <div className="profile-content">
-           
+        <div className="card-block">
+            <h3 className="section-title">账户</h3>
             <button className="logout-btn" onClick={handleLogout}>退出登录</button>
-            
         </div>
     </div>
   );
@@ -184,10 +190,17 @@ function EmailPassword({ email, pwd, setPwd, newPwd, setNewPwd, handleLogout }){
 
 function OtherSettings(){
   return (
-    <div>
-        <h2>Wait for it</h2>
+    <div className="contentsection right-inner">
+        <div className="card-block">
+            <h3 className="section-title">其他设置</h3>
+            <div className="decor-text">waitforit</div>
+        </div>
     </div>
   );
 }
 
+
+async function renewBio(){
+
+}
 
