@@ -3,6 +3,7 @@ import axios from './axios';
 export async function checkLogin(email, password) {
   const res = await axios.post(
     '/auth/login',   // 注意：没有 localhost
+    //后端是RequestParam
     null, // body为空
     {
       params: {
@@ -18,14 +19,18 @@ export async function checkLogin(email, password) {
 export async function register(email, password, username) {
   const res = await axios.post(
     '/auth/register',
+    //后端是RequestParam
+    null,
     {
-    username,
-    pass: password,
-    email
+      params: {
+        username: username,
+        pass: password,
+        email: email
+      }
     }
   );
 
-  return res.data;
+  return res;
 }
 
 export async function pullBio(userid) {

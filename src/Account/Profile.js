@@ -9,19 +9,29 @@ import { getUserProfile } from '../Variable/profile';
 export default function Profile(){
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [displayName, setDisplayName] = useState('');
-  const [bio, setBio] = useState('');
-  const [avatarLink] = useState('https://example.com/avatar.png');
-  const [birthday, setBirthday] = useState('');
-  const [username] = useState('your-username');
-
   const profile = useSelector(state => state.profile.userData);
+  const profileError = useSelector(state => state.profile.error);
+
+  const [bio, setBio] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [gender, setGender] = useState('');
 
   useEffect(() => {
     dispatch(getUserProfile());
-    setBio(profile.bio);
-    setBirthday(profile.birthday); 
-  }, [dispatch, profile.bio, profile.birthday]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile.bio) setBio(profile.bio);
+    if (profile.birthday) setBirthday(profile.birthday);
+    if (profile.gender) setGender(profile.gender);
+  }, [profile]);
+
+  //开发环境会跑两次报错，这个是react18的特性，不是代码错误
+  useEffect(() => {
+    if (profileError) {
+      alert(`获取用户信息失败: ${profileError}`);
+    }
+  }, [profileError]);
 
   const [tab, setTab] = useState('info');
 
@@ -36,15 +46,15 @@ export default function Profile(){
 
         <Profiles 
           bio={bio} setBio={setBio} 
-          displayName={displayName} setDisplayName={setDisplayName}
-          avatarLink={avatarLink}
+          avatar={profile.avatar}
           birthday={birthday} setBirthday={setBirthday}
-          username={username}
+          gender={gender} setGender={setGender}
           handleLogout={handleLogout} tab={tab} setTab={setTab}
         />
     </div>
   );
 }
+
 
 function NavigateBar({ navigate }){
   return (
@@ -61,9 +71,9 @@ function NavigateBar({ navigate }){
 }
 
 function Profiles(
-  { bio, setBio, displayName, 
-    setDisplayName, avatarLink,
-    birthday, setBirthday, username,
+  { bio, setBio, avatar,
+    birthday, setBirthday,
+    gender, setGender,
     handleLogout, tab, setTab }
 ){
     return (
@@ -75,12 +85,11 @@ function Profiles(
                     <ProfileInfo
                         bio={bio}
                         setBio={setBio}
-                        displayName={displayName}
-                        setDisplayName={setDisplayName}
-            avatarLink={avatarLink}
-            birthday={birthday}
-            setBirthday={setBirthday}
-            username={username}
+                        avatar={avatar}
+                        birthday={birthday}
+                        setBirthday={setBirthday}
+                        gender={gender}
+                        setGender={setGender}
                     />
                 )}
 
@@ -117,26 +126,16 @@ function LeftSection({ tab, setTab }){
   );
 }
 
-function ProfileInfo({ bio, setBio, username , avatarLink, birthday, setBirthday }){
+function ProfileInfo({ bio, setBio, avatar, birthday, setBirthday, gender, setGender }){
   return (
     <div className='contentsection right-inner'>
         <div className="card-block">
             <h3 className="section-title">基本信息</h3>
             <div className="field-stack">
                 <div className="field-group">
-                    <label className="field-label">用户名</label>
-                    <input 
-                      type="text" 
-                      value={username}
-                      readOnly
-                      className="field-input"
-                    />
-                </div>
-
-                <div className="field-group">
                     <label className="field-label">Bio</label>
                     <textarea
-                      value={bio}
+                      value={bio || ''}
                       onChange={e=>setBio(e.target.value)}
                       placeholder="一句话介绍你自己"
                       className="field-input textarea"
@@ -148,7 +147,7 @@ function ProfileInfo({ bio, setBio, username , avatarLink, birthday, setBirthday
                     <label className="field-label">头像链接</label>
                     <input 
                       type="text" 
-                      value={avatarLink}
+                      value={avatar || ''}
                       readOnly
                       className="field-input"
                     />
@@ -158,10 +157,24 @@ function ProfileInfo({ bio, setBio, username , avatarLink, birthday, setBirthday
                     <label className="field-label">生日</label>
                     <input 
                       type="date" 
-                      value={birthday}
+                      value={birthday || ''}
                       onChange={e=>setBirthday(e.target.value)}
                       className="field-input"
                     />
+                </div>
+
+                <div className="field-group">
+                    <label className="field-label">性别</label>
+                    <select
+                      value={gender || ''}
+                      onChange={e=>setGender(e.target.value)}
+                      className="field-input"
+                    >
+                      <option value="">请选择</option>
+                      <option value="male">男</option>
+                      <option value="female">女</option>
+                      <option value="other">其他</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -200,7 +213,5 @@ function OtherSettings(){
 }
 
 
-async function renewBio(){
 
-}
 

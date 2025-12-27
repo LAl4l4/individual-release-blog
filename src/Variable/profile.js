@@ -2,16 +2,24 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { pullProfiles } from '../API/pullprof';
 import { logOut } from './login';
 
+
 // 异步action：从数据库获取用户数据
 export const getUserProfile = createAsyncThunk(
     'profile/getUserProfile',
-    async (_, { rejectWithValue }) => {
+    async (_, { getState, rejectWithValue }) => {
+        const state = getState();
+        const id = state.login.userId; // 从login slice获取用户ID
+
         try {
-            const response = await pullProfiles();//通过id拉取
+            const response = await pullProfiles(id);//通过id拉取
 
             //这里做错误handle
+            if (!response) {
+                return rejectWithValue('Failed to fetch profile data');
+            }
 
-            return response.data;
+            //API已经返回数据
+            return response;
         } catch (error) {
             return rejectWithValue(error.message);
         }

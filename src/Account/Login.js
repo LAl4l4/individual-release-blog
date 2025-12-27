@@ -1,32 +1,15 @@
 import {useState} from 'react';
 import './Login.css';
-import {checkLogin} from '../API/auth';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { logIn, storeUserId } from '../Variable/login';
 import { setPageNum } from '../Variable/pagenum';
+import { checkLoginThunk } from '../Variable/login';
+
 
 // Front-end only shell. The app's backend integration should pass an `onSubmit` prop.
 // Example usage:
 // <Login onSubmit={(creds)=> api.login(creds).then(...)} />
-async function CheckLogin(email, password) {
-	const dispatch = useDispatch();
 
-    try {
-    // axios 默认发送 JSON 或 form-data,需要匹配后端
-    const res = await checkLogin(email, password);
-
-    if (res.data.result === '登录成功') {
-	  dispatch(storeUserId(res.data.userid)); // 后端返回userid字段
-      return { success: true, message: '登录成功' };	
-    } else {
-      return { success: false, message: res.data.result };
-    }
-  } catch (err) {
-    console.error('请求失败', err);
-    return { success: false, message: '网络错误' };
-  }
-}
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -35,26 +18,21 @@ export default function Login() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	async function handleSubmit(e){
+	async function handleSubmit(e) {
 		e.preventDefault();
 		setLocalError('');
-		// Basic front-end validation only (optional)
-		if (!email || !password) {
-			setLocalError('请填写邮箱/用户名和密码');
-			return;
-		}
-		
-        const result = await CheckLogin(email, password);
-        if (result.success) {
-            dispatch(logIn());
-			
-			
+
+		const resultAction = await dispatch(
+			checkLoginThunk({ email, password })
+		);
+
+		if (checkLoginThunk.fulfilled.match(resultAction)) {
+			alert('登录成功');
 			dispatch(setPageNum(0));
-            alert('登录成功');
-            navigate('/');
-        } else {
-            setLocalError(result.message);
-        }
+			navigate('/');
+		} else {
+			setLocalError(resultAction.payload);
+		}
 	}
 
 
