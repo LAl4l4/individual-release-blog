@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logOut } from '../Variable/login';
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile } from '../Variable/profile';
+import { useForm } from 'react-hook-form';
 
 
 export default function Profile(){
@@ -16,6 +17,7 @@ export default function Profile(){
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
 
+  //这里拉取Profile
   useEffect(() => {
     dispatch(getUserProfile());
   }, [dispatch]);
@@ -84,12 +86,9 @@ function Profiles(
                 {tab === 'info' && (
                     <ProfileInfo
                         bio={bio}
-                        setBio={setBio}
                         avatar={avatar}
                         birthday={birthday}
-                        setBirthday={setBirthday}
                         gender={gender}
-                        setGender={setGender}
                     />
                 )}
 
@@ -126,58 +125,111 @@ function LeftSection({ tab, setTab }){
   );
 }
 
-function ProfileInfo({ bio, setBio, avatar, birthday, setBirthday, gender, setGender }){
+function ProfileInfo({ bio, avatar, birthday, gender }){
+  const [isSaving, setIsSaving] = useState(false);
+  const userid = useSelector(state => state.login.userid);
+
+  const { register, handleSubmit, formState: { isDirty, dirtyFields }, reset } = useForm({
+    defaultValues: {
+      bio: bio || '',
+      birthday: birthday || '',
+      gender: gender || ''
+    },
+    values: {
+      bio: bio || '',
+      birthday: birthday || '',
+      gender: gender || ''
+    },
+    // 核心配置：防止外部 Props 变化导致用户正写的内容消失
+    resetOptions: {
+      keepDirtyValues: true, 
+    }
+  });
+
+  const onSubmit = async (data) => {
+    // 提取被修改的字段
+    const patchData = {
+      userid: userid
+    };
+    Object.keys(dirtyFields).forEach(key => {
+      patchData[key] = data[key];
+    });
+
+    console.log('仅提交修改的字段:', patchData);
+
+    // 模拟 API 请求
+    try {
+      setIsSaving(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('保存成功');
+      alert('保存成功！');
+      reset(data); // 重置表单状态，清除 isDirty
+      setIsSaving(false);
+    } catch (error) {
+      console.error('保存失败', error);
+      alert('保存失败，请重试');
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className='contentsection right-inner'>
-        <div className="card-block">
-            <h3 className="section-title">基本信息</h3>
-            <div className="field-stack">
-                <div className="field-group">
-                    <label className="field-label">Bio</label>
-                    <textarea
-                      value={bio || ''}
-                      onChange={e=>setBio(e.target.value)}
-                      placeholder="一句话介绍你自己"
-                      className="field-input textarea"
-                      rows={3}
-                    />
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="card-block">
+              <h3 className="section-title">基本信息</h3>
+              <div className="field-stack">
+                  <div className="field-group">
+                      <label className="field-label">Bio</label>
+                      <textarea
+                        {...register('bio')}
+                        placeholder="一句话介绍你自己"
+                        className="field-input textarea"
+                        rows={3}
+                      />
+                  </div>
 
-                <div className="field-group">
-                    <label className="field-label">头像链接</label>
-                    <input 
-                      type="text" 
-                      value={avatar || ''}
-                      readOnly
-                      className="field-input"
-                    />
-                </div>
+                  <div className="field-group">
+                      <label className="field-label">头像链接</label>
+                      <input 
+                        type="text" 
+                        value={avatar || ''}
+                        readOnly={true}
+                        className="field-input"
+                      />
+                  </div>
 
-                <div className="field-group">
-                    <label className="field-label">生日</label>
-                    <input 
-                      type="date" 
-                      value={birthday || ''}
-                      onChange={e=>setBirthday(e.target.value)}
-                      className="field-input"
-                    />
-                </div>
+                  <div className="field-group">
+                      <label className="field-label">生日</label>
+                      <input 
+                        type="date" 
+                        {...register('birthday')}
+                        className="field-input"
+                      />
+                  </div>
 
-                <div className="field-group">
-                    <label className="field-label">性别</label>
-                    <select
-                      value={gender || ''}
-                      onChange={e=>setGender(e.target.value)}
-                      className="field-input"
-                    >
-                      <option value="">请选择</option>
-                      <option value="male">男</option>
-                      <option value="female">女</option>
-                      <option value="other">其他</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+                  <div className="field-group">
+                      <label className="field-label">性别</label>
+                      <select
+                        {...register('gender')}
+                        className="field-input"
+                      >
+                        <option value="undisclosed">不公开</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                        <option value="other">其他</option>
+                      </select>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="save-btn" 
+                    disabled={!isDirty || isSaving}
+                  >
+                    {isSaving ? '保存中...' : '保存修改'}
+                  </button>
+              </div>
+          </div>
+        </form>
     </div>
   );
 }
@@ -186,11 +238,11 @@ function EmailPassword({ handleLogout }){
   return (
     <div className="contentsection right-inner">
         <div className="card-block">
-            <h3 className="section-title">密码 / 邮箱</h3>
-      <div className="action-row">
-        <button className="primary-btn">修改密码</button>
-        <button className="ghost-btn">修改邮箱</button>
-            </div>
+          <h3 className="section-title">密码 / 邮箱</h3>
+          <div className="action-row">
+            <button className="primary-btn">修改密码</button>
+            <button className="ghost-btn">修改邮箱</button>
+          </div>
         </div>
 
         <div className="card-block">

@@ -114,7 +114,7 @@
   box-shadow: 0 0 0 4px rgba(168,179,255,0.15);
 }
 
-.profile-screen .field-input:read-only{
+.profile-screen .field-input[readonly]{
   background: #f3f4f6;
   color: #888;
   cursor: not-allowed;
@@ -137,10 +137,17 @@
   box-shadow: 0 6px 20px rgba(102,126,234,0.35);
   transition: all .24s ease;
   margin-top:8px;
+  width: 100%;
 }
-.save-btn:hover{
+.save-btn:hover:not(:disabled){
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(102,126,234,0.45);
+}
+.save-btn:disabled{
+  background: #e1e4e8;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .danger-zone{

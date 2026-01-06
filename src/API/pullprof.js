@@ -9,13 +9,26 @@ export async function pullProfiles(userid) {
     const res = await axios.get(
         '/auth/pullProfiles',
         // 第二个参数就是 config，在get里
-        //目前会传一个null字符串过去，正在排查原因
         {
             params: {
                 userid: userid
             }
         }
     );
+
+    if (res.data === null) {
+        throw new Error('No response from server');
+    }
+
+    return res.data;
+}
+
+export async function updateProfile(data) {
+    if (!data || !data.userid) {
+        throw new Error('Invalid data');
+    }
+
+    const res = await axios.post('/auth/pushProfile', data);
 
     if (res.data === null) {
         throw new Error('No response from server');
