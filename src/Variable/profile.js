@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { pullProfiles } from '../API/pullprof';
+import { pullProfiles } from '../API/prof';
 import { logOut } from './login';
 
 
