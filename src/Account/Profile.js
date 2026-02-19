@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import './Profile.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { logOut } from '../Variable/login';
+import { logOut, selectUserId } from '../Variable/login';
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile } from '../Variable/profile';
 import { useForm } from 'react-hook-form';
+import { updateProfile } from '../API/prof';
 
 
 export default function Profile(){
@@ -12,21 +13,13 @@ export default function Profile(){
   const navigate = useNavigate();
   const profile = useSelector(state => state.profile.userData);
   const profileError = useSelector(state => state.profile.error);
-
-  const [bio, setBio] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [gender, setGender] = useState('');
+  const userid = useSelector(selectUserId);
+  const [isSaving, setIsSaving] = useState(false);
 
   //这里拉取Profile
   useEffect(() => {
     dispatch(getUserProfile());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (profile.bio) setBio(profile.bio);
-    if (profile.birthday) setBirthday(profile.birthday);
-    if (profile.gender) setGender(profile.gender);
-  }, [profile]);
 
   //开发环境会跑两次报错，这个是react18的特性，不是代码错误
   useEffect(() => {
@@ -34,6 +27,52 @@ export default function Profile(){
       alert(`获取用户信息失败: ${profileError}`);
     }
   }, [profileError]);
+
+  // 集中管理表单逻辑
+  const { register, handleSubmit, formState: { isDirty, dirtyFields }, reset } = useForm({
+    defaultValues: {
+      bio: profile.bio || '',
+      birthday: profile.birthday || '',
+      gender: profile.gender || ''
+    },
+    values: {
+      bio: profile.bio || '',
+      birthday: profile.birthday || '',
+      gender: profile.gender || ''
+    },
+    resetOptions: {
+      keepDirtyValues: true,
+    }
+  });
+
+  // 统一的表单提交逻辑
+  const onSubmit = async (data) => {
+    const patchData = {
+      userid: userid
+    };
+    Object.keys(dirtyFields).forEach(key => {
+      patchData[key] = data[key];
+    });
+
+    try {
+      setIsSaving(true);
+      const res = await updateProfile(patchData);
+      if (res === '保存成功') {
+        console.log('保存成功');
+        alert('保存成功！');
+        reset(data);
+        // 关键：提交成功后刷新 Redux 状态
+        dispatch(getUserProfile());
+        setIsSaving(false);
+      } else {
+        throw new Error(res);
+      }
+    } catch (error) {
+      console.error('保存失败', error);
+      alert(`保存失败: ${error.message}`);
+      setIsSaving(false);
+    }
+  };
 
   const [tab, setTab] = useState('info');
 
@@ -47,11 +86,15 @@ export default function Profile(){
         <NavigateBar navigate={navigate} />
 
         <Profiles 
-          bio={bio} setBio={setBio} 
           avatar={profile.avatar}
-          birthday={birthday} setBirthday={setBirthday}
-          gender={gender} setGender={setGender}
-          handleLogout={handleLogout} tab={tab} setTab={setTab}
+          handleLogout={handleLogout} 
+          tab={tab} 
+          setTab={setTab}
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          isDirty={isDirty}
+          isSaving={isSaving}
         />
     </div>
   );
@@ -73,10 +116,7 @@ function NavigateBar({ navigate }){
 }
 
 function Profiles(
-  { bio, setBio, avatar,
-    birthday, setBirthday,
-    gender, setGender,
-    handleLogout, tab, setTab }
+  { avatar, handleLogout, tab, setTab, register, handleSubmit, onSubmit, isDirty, isSaving }
 ){
     return (
         <div className='infopart'>
@@ -85,10 +125,12 @@ function Profiles(
       <div className="rightsection">
                 {tab === 'info' && (
                     <ProfileInfo
-                        bio={bio}
                         avatar={avatar}
-                        birthday={birthday}
-                        gender={gender}
+                        register={register}
+                        handleSubmit={handleSubmit}
+                        onSubmit={onSubmit}
+                        isDirty={isDirty}
+                        isSaving={isSaving}
                     />
                 )}
 
@@ -125,53 +167,7 @@ function LeftSection({ tab, setTab }){
   );
 }
 
-function ProfileInfo({ bio, avatar, birthday, gender }){
-  const [isSaving, setIsSaving] = useState(false);
-  const userid = useSelector(state => state.login.userid);
-
-  const { register, handleSubmit, formState: { isDirty, dirtyFields }, reset } = useForm({
-    defaultValues: {
-      bio: bio || '',
-      birthday: birthday || '',
-      gender: gender || ''
-    },
-    values: {
-      bio: bio || '',
-      birthday: birthday || '',
-      gender: gender || ''
-    },
-    // 核心配置：防止外部 Props 变化导致用户正写的内容消失
-    resetOptions: {
-      keepDirtyValues: true, 
-    }
-  });
-
-  const onSubmit = async (data) => {
-    // 提取被修改的字段
-    const patchData = {
-      userid: userid
-    };
-    Object.keys(dirtyFields).forEach(key => {
-      patchData[key] = data[key];
-    });
-
-    console.log('仅提交修改的字段:', patchData);
-
-    // 模拟 API 请求
-    try {
-      setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log('保存成功');
-      alert('保存成功！');
-      reset(data); // 重置表单状态，清除 isDirty
-      setIsSaving(false);
-    } catch (error) {
-      console.error('保存失败', error);
-      alert('保存失败，请重试');
-      setIsSaving(false);
-    }
-  };
-
+function ProfileInfo({ avatar, register, handleSubmit, onSubmit, isDirty, isSaving }){
   return (
     <div className='contentsection right-inner'>
         <form onSubmit={handleSubmit(onSubmit)}>
